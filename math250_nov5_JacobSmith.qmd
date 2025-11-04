@@ -1,0 +1,85 @@
+---
+title: "Inference, etc Homework - Jacob Smith"
+format: html
+author: Jacob Smith
+date: November 5, 2025
+embed-resources: TRUE
+---
+
+```{r}
+#| label: setup
+#| message: FALSE
+
+library(tidyverse)
+library(ISLR2)
+library(gt)
+data(Carseats)
+#view(Carseats)
+```
+
+## Problem 1
+
+The first two problems in this set refer to the ISLR2::Carseats set, which includes simulated sample data for 400 stores selling a particular brand of child carseat. We view this data as a simple random sample from a larger population.
+
+Does this data provide evidence against the company’s claim that the average price of their own seats is $110? Follow all best practices from class, including hypotheses, a relevant visualization, and a conclusion in non-technical language.
+
+Null hypothesis: the average price of the company's car seat is $110
+
+Alternative hypothesis: the average price is not $110
+
+```{r}
+carseats_mean <- mean(Carseats$Price)
+carseats_sd <- sd(Carseats$Price) # I created this because I wanted to include a bell curve on the graph below, but couldn't get it to work
+
+carseats_table <- data.frame(statistic = c("Mean", "Standard Deviation"),
+                             value = c(carseats_mean, carseats_sd))
+
+carseats_table %>% 
+  gt() %>% 
+  tab_header(title = "Summary Statistics for Carseats Price") %>% 
+  fmt_number(columns = value,
+             decimals = 2)
+```
+
+```{r}
+#| message: false
+#| alt-text: Histogram showing the number of carseats at each price, with a vertical line at the hypothesized mean.
+  
+ggplot(Carseats, aes(x = Price)) +
+  geom_histogram(fill = "skyblue", color = "black") +
+  geom_vline(xintercept = 110, color = "red") +
+  scale_x_continuous(breaks = c(50, 75, 100, 110, 125, 150, 175),
+                     labels = c("50", "75", "100", "110", "125", "150", "175")) +
+  labs(title = "Histogram of Carseat Prices",
+       x = "Price",
+       y = "# of Carseats") +
+  theme_minimal()
+```
+
+Conclusion: the average car seat is not $110, but rather 115.80 dollars.
+
+## Problem 2
+
+Compute a level 90% confidence interval for the mean competitor price in the population from which this sample is drawn. What is the sample mean? What is the margin of error?
+
+```{r}
+CSttests <- t.test(Carseats$CompPrice, conf.level = 0.90)
+
+sample_mean <- CSttests$estimate
+conf_int <- CSttests$conf.int
+margin_error <- (conf_int[2] - conf_int[1]) / 2
+
+cat("Sample mean:", round(sample_mean, 2),"Margin of error:", round(margin_error, 2), "\n")
+```
+
+## Problem 3
+
+Use these tools to create a table with counts of penguin species and home islands in the penguins set. Include marginal counts in your table.
+
+```{r}
+data(penguins)
+#view(penguins)
+
+pentbl <- table(penguins$species, penguins$island)
+addmargins(pentbl)
+```
