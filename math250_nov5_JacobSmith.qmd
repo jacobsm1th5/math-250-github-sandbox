@@ -86,4 +86,4 @@ addmargins(pentbl)
 
 ## Problem 4
 
-https://github.com/jacobsm1th5/math-250-github-sandbox
+[GitHub Repository](https://github.com/jacobsm1th5/math-250-github-sandbox)
